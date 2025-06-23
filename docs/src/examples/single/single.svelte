@@ -1,18 +1,31 @@
-<!-- @migration-task Error while migrating Svelte code: $$props is used together with named props in a way that cannot be automatically migrated. -->
 <script>
+  import { run } from 'svelte/legacy';
+
   import { DatePicker } from '@svelte-plugins/datepicker';
   import { format } from 'date-fns';
   import Prism from 'svelte-prismjs';
 
-  export let showTimePicker = false;
-  export let disabledDates = [];
-  export let enableFutureDates = null;
-  export let enablePastDates = null;
-  export let enabledDates = [];
+  /**
+   * @typedef {Object} Props
+   * @property {boolean} [showTimePicker]
+   * @property {any} [disabledDates]
+   * @property {any} [enableFutureDates]
+   * @property {any} [enablePastDates]
+   * @property {any} [enabledDates]
+   */
 
-  let startDate = new Date();
+  /** @type {Props} */
+  let {
+    showTimePicker = false,
+    disabledDates = [],
+    enableFutureDates = null,
+    enablePastDates = null,
+    enabledDates = []
+  } = $props();
+
+  let startDate = $state(new Date());
   let dateFormat = 'MM/dd/yy';
-  let isOpen = false;
+  let isOpen = $state(false);
 
   const toggleDatePicker = () => (isOpen = !isOpen);
 
@@ -24,7 +37,7 @@
     return dateString && format(new Date(dateString), dateFormat) || '';
   };
 
-  let formattedStartDate = formatDate(startDate);
+  let formattedStartDate = $state(formatDate(startDate));
 
   const onChange = () => {
     startDate = new Date(formattedStartDate);
@@ -38,11 +51,13 @@
     console.log(args, 'onDateChange');
   };
 
-  $: formattedStartDate = formatDate(startDate);
+  run(() => {
+    formattedStartDate = formatDate(startDate);
+  });
 </script>
 
-<DatePicker bind:isOpen bind:startDate {...$$props} {onNavigationChange} {onDateChange}>
-  <input type="text" bind:value={formattedStartDate} on:change={onChange} on:click={toggleDatePicker} />
+<DatePicker bind:isOpen bind:startDate  {showTimePicker} {disabledDates} {enableFutureDates} {enablePastDates} {enabledDates} {onNavigationChange} {onDateChange}>
+  <input type="text" bind:value={formattedStartDate} onchange={onChange} onclick={toggleDatePicker} />
 </DatePicker>
 
 <Prism showLineNumbers={true} code={`
