@@ -1,9 +1,16 @@
-<script>
+<script lang="ts">
+  import { run } from 'svelte/legacy';
+
   import { DatePicker } from '@svelte-plugins/datepicker';
   import { format } from 'date-fns';
   import Prism from 'svelte-prismjs';
 
-  export let days = 29;
+  interface Props {
+    days?: number;
+    [key: string]: any
+  }
+
+  let { days = 29, ...rest }: Props = $props();
 
   const today = new Date();
 
@@ -13,12 +20,12 @@
     return Date.now() - days * MILLISECONDS_IN_DAY;
   };
 
-  let startDate = getDateFromToday(days);
-  let endDate = today;
+  let startDate = $state(getDateFromToday(days));
+  let endDate = $state(today);
   let dateFormat = 'MMM d, yyyy';
-  let isOpen = false;
+  let isOpen = $state(false);
 
-  let formattedStartDate = '';
+  let formattedStartDate = $state('');
 
   const onClearDates = () => {
     startDate = '';
@@ -43,8 +50,10 @@
     return dateString && format(new Date(dateString), dateFormat) || '';
   };
 
-  $: formattedStartDate = formatDate(startDate);
-  $: formattedEndDate = formatDate(endDate);
+  run(() => {
+    formattedStartDate = formatDate(startDate);
+  });
+  let formattedEndDate = $derived(formatDate(endDate));
 </script>
 
 <div class="date-filter">
@@ -57,10 +66,10 @@
     isRange
     showPresets
     showPresetsOnly
-    {...$$restProps}
+    {...rest}
   >
-    <div class="date-field" on:click={toggleDatePicker} role="button" tabindex="0" class:open={isOpen}>
-      <i class="icon-calendar" />
+    <div class="date-field" onclick={toggleDatePicker} role="button" tabindex="0" class:open={isOpen}>
+      <i class="icon-calendar"></i>
       <div class="date">
         {#if startDate}
           {formattedStartDate} - {formattedEndDate}
@@ -69,8 +78,8 @@
         {/if}
       </div>
       {#if startDate}
-        <span role="button" tabindex="0" on:click={onClearDates}>
-          <i class="os-icon-x" />
+        <span role="button" tabindex="0" onclick={onClearDates}>
+          <i class="os-icon-x"></i>
         </span>
       {/if}
     </div>

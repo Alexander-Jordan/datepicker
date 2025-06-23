@@ -1,196 +1,67 @@
 <script>
+  import { run, preventDefault } from 'svelte/legacy';
+
   // @ts-nocheck
   import { tick } from 'svelte';
   import { clickOutside } from './actions';
 
-  /**
-   * Represents the start date for a date picker.
-   * @type {any}
-   */
-  export let startDate = null;
+  
 
-  /**
-   * Represents the end date for a date picker.
-   * @type {any}
-   */
-  export let endDate = null;
+  
 
-  /**
-   * Represents the start time for the date picker (in HH:mm format).
-   * @type {string}
-   */
-  export let startDateTime = '00:00';
+  
 
-  /**
-   * Represents the end time for the date picker (in HH:mm format).
-   * @type {string}
-   */
-  export let endDateTime = '00:00';
+  
 
-  /**
-   * Represents the current date.
-   * @type {Date}
-   */
-  export let today = new Date();
+  
 
-  /**
-   * Represents the default year for the date picker.
-   * @type {number}
-   */
-  export let defaultYear = today.getFullYear();
+  
 
-  /**
-   * Represents the default month for the date picker.
-   * @type {number}
-   */
-  export let defaultMonth = today.getMonth();
+  
 
-  /**
-   * Represents the start day of the week (0 for Sunday, 1 for Monday, etc.).
-   * @type {number}
-   */
-  export let startOfWeek = 0;
+  
 
-  /**
-   * Indicates whether the date picker has multiple panes.
-   * @type {boolean}
-   */
-  export let isMultipane = false;
+  
 
-  /**
-   * Indicates whether the date picker is in range mode.
-   * @type {boolean}
-   */
-  export let isRange = false;
+  
 
-  /**
-   * Indicates whether the date picker is open.
-   * @type {boolean}
-   */
-  export let isOpen = false;
+  
 
-  /**
-   * Specifies the alignment of the date picker (e.g., 'left', 'center', 'right').
-   * @type {string}
-   */
-  export let align = 'left';
+  
 
-  /**
-   * Represents the theme of the date picker.
-   * @type {string}
-   */
-  export let theme = '';
+  
 
-  /**
-   * An array of disabled dates.
-   * @type {Date[]}
-   */
-  export let disabledDates = [];
+  
 
-  /**
-   * An array of enabled dates.
-   * @type {Date[]}
-   */
-  export let enabledDates = [];
+  
 
-  /**
-   * Callback function triggered when a date or date range changes.
-   * @type {function}
-   * @default () => {}
-   */
-  export let onDateChange = () => {};
+  
 
-  /**
-   * Callback function to handle day click events.
-   * @type {(event: Object) => void}
-   */
-  export let onDayClick = () => {};
+  
 
-  /**
-   * Callback function to handle the navigation click event for months and years
-   * @type {(event: Object) => void}
-   */
-  export let onNavigationChange = () => {};
+  
 
-  /**
-   * Indicates whether the date picker should always be shown.
-   * @type {boolean}
-   */
-  export let alwaysShow = false;
+  
 
-  /**
-   * Indicates whether year controls are displayed in the date picker.
-   * @type {boolean}
-   */
-  export let showYearControls = true;
+  
 
-  /**
-   * Indicates whether preset options are displayed in the date picker.
-   * @type {boolean}
-   */
-  export let showPresets = false;
+  
 
-  /**
-   * Indicates whether preset date ranges should only be displayed
-   * @type {boolean}
-   * @default false
-   */
-  export let showPresetsOnly = false;
+  
 
-  /**
-   * Indicates whether the time picker is shown in the date picker.
-   * @type {boolean}
-   */
-  export let showTimePicker = false;
+  
 
-  /**
-   * Indicates whether future dates are enabled.
-   * @type {boolean}
-   */
-  export let enableFutureDates = false;
+  
 
-  /**
-   * Indicates whether past dates are enabled.
-   * @type {boolean}
-   */
-  export let enablePastDates = true;
+  
 
-  /**
-   * An array of preset date range labels.
-   * @type {string[]}
-   */
-  export let presetLabels = ['Today', 'Last 7 Days', 'Last 30 Days', 'Last 60 Days', 'Last 90 Days', 'Last Year'];
+  
 
-  /**
-   * An array of day-of-week labels.
-   * @type {string[]}
-   */
-  export let dowLabels = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+  
 
-  /**
-   * An array of month labels.
-   * @type {string[]}
-   */
-  export let monthLabels = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December'
-  ];
+  
 
-  /**
-   * Determines if the default font "Rubik" should be loaded.
-   * @type {boolean}
-   */
-  export let includeFont = true;
+  
 
   /**
    * The number of milliseconds in a day.
@@ -208,11 +79,87 @@
     return Date.now() - days * MILLISECONDS_IN_DAY;
   };
 
+  
   /**
-   * An array of preset date ranges with labels and start/end timestamps.
-   * @type {Object[]}
+   * @typedef {Object} Props
+   * @property {any} [startDate] - Represents the start date for a date picker.
+   * @property {any} [endDate] - Represents the end date for a date picker.
+   * @property {string} [startDateTime] - Represents the start time for the date picker (in HH:mm format).
+   * @property {string} [endDateTime] - Represents the end time for the date picker (in HH:mm format).
+   * @property {Date} [today] - Represents the current date.
+   * @property {number} [defaultYear] - Represents the default year for the date picker.
+   * @property {number} [defaultMonth] - Represents the default month for the date picker.
+   * @property {number} [startOfWeek] - Represents the start day of the week (0 for Sunday, 1 for Monday, etc.).
+   * @property {boolean} [isMultipane] - Indicates whether the date picker has multiple panes.
+   * @property {boolean} [isRange] - Indicates whether the date picker is in range mode.
+   * @property {boolean} [isOpen] - Indicates whether the date picker is open.
+   * @property {string} [align] - Specifies the alignment of the date picker (e.g., 'left', 'center', 'right').
+   * @property {string} [theme] - Represents the theme of the date picker.
+   * @property {Date[]} [disabledDates] - An array of disabled dates.
+   * @property {Date[]} [enabledDates] - An array of enabled dates.
+   * @property {function} [onDateChange] - Callback function triggered when a date or date range changes.
+   * @property {(event: Object) => void} [onDayClick] - Callback function to handle day click events.
+   * @property {(event: Object) => void} [onNavigationChange] - Callback function to handle the navigation click event for months and years
+   * @property {boolean} [alwaysShow] - Indicates whether the date picker should always be shown.
+   * @property {boolean} [showYearControls] - Indicates whether year controls are displayed in the date picker.
+   * @property {boolean} [showPresets] - Indicates whether preset options are displayed in the date picker.
+   * @property {boolean} [showPresetsOnly] - Indicates whether preset date ranges should only be displayed
+   * @property {boolean} [showTimePicker] - Indicates whether the time picker is shown in the date picker.
+   * @property {boolean} [enableFutureDates] - Indicates whether future dates are enabled.
+   * @property {boolean} [enablePastDates] - Indicates whether past dates are enabled.
+   * @property {string[]} [presetLabels] - An array of preset date range labels.
+   * @property {string[]} [dowLabels] - An array of day-of-week labels.
+   * @property {string[]} [monthLabels] - An array of month labels.
+   * @property {boolean} [includeFont] - Determines if the default font "Rubik" should be loaded.
+   * @property {Object[]} [presetRanges] - An array of preset date ranges with labels and start/end timestamps.
+   * @property {import('svelte').Snippet} [children]
    */
-  export let presetRanges = [
+
+  /** @type {Props} */
+  let {
+    startDate = $bindable(null),
+    endDate = $bindable(null),
+    startDateTime = $bindable('00:00'),
+    endDateTime = $bindable('00:00'),
+    today = new Date(),
+    defaultYear = today.getFullYear(),
+    defaultMonth = today.getMonth(),
+    startOfWeek = $bindable(0),
+    isMultipane = false,
+    isRange = false,
+    isOpen = $bindable(false),
+    align = 'left',
+    theme = '',
+    disabledDates = [],
+    enabledDates = [],
+    onDateChange = () => {},
+    onDayClick = () => {},
+    onNavigationChange = () => {},
+    alwaysShow = false,
+    showYearControls = true,
+    showPresets = false,
+    showPresetsOnly = false,
+    showTimePicker = false,
+    enableFutureDates = false,
+    enablePastDates = true,
+    presetLabels = ['Today', 'Last 7 Days', 'Last 30 Days', 'Last 60 Days', 'Last 90 Days', 'Last Year'],
+    dowLabels = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+    monthLabels = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+  ],
+    includeFont = true,
+    presetRanges = [
     {
       label: presetLabels[0],
       start: getDateFromToday(0),
@@ -243,19 +190,21 @@
       start: getDateFromToday(364),
       end: getDateFromToday(0)
     }
-  ];
+  ],
+    children
+  } = $props();
 
   /**
    * Initialization flag to delay some actions
    * @type {boolean}
    */
-  let initialize = false;
+  let initialize = $state(false);
 
   /**
    * Stores the possible end date for a date range.
    * @type {any}
    */
-  let tempEndDate;
+  let tempEndDate = $state();
 
   /**
    * Stores the start date for any revert operation.
@@ -353,8 +302,8 @@
     isOpen = false;
   };
 
-  let startDateYear = Number(defaultYear);
-  let startDateMonth = Number(defaultMonth);
+  let startDateYear = $state(Number(defaultYear));
+  let startDateMonth = $state(Number(defaultMonth));
 
   const updateCalendars = () => {
     startDateCalendar = startDateCalendar;
@@ -891,52 +840,68 @@
     startOfWeek = parseInt(startOfWeek, 10);
   }
 
-  $: startDate = startDate ? getTimestamp(startDate) : null;
-  $: endDate = endDate ? getTimestamp(endDate) : null;
+  run(() => {
+    startDate = startDate ? getTimestamp(startDate) : null;
+  });
+  run(() => {
+    endDate = endDate ? getTimestamp(endDate) : null;
+  });
 
-  $: if (startDate || endDate) {
-    updateCalendars();
-  }
-
-  $: todayMonth = today && today.getMonth();
-  $: todayDay = today && today.getDate();
-  $: todayYear = today && today.getFullYear();
-  $: prev = calendarize(new Date(startDateYear, startDateMonth - 1), startOfWeek);
-  $: startDateCalendar = calendarize(new Date(startDateYear, startDateMonth), startOfWeek);
-  $: next = calendarize(new Date(startDateYear, startDateMonth + 1), startOfWeek);
-  $: endDateMonth = startDateMonth === 11 ? 0 : startDateMonth + 1;
-  $: endDateYear = endDateMonth === 0 ? startDateYear + 1 : startDateYear;
-  $: endDateCalendar = calendarize(new Date(endDateYear, endDateMonth), startOfWeek);
-  $: !isRange && (endDate = null);
-  $: disabled = getDatesFromArray(disabledDates);
-  $: enabled = getDatesFromArray(enabledDates, true);
-
-  $: if (!startDate && !endDate) {
-    startDateYear = Number(defaultYear);
-    startDateMonth = Number(defaultMonth);
-  }
-
-  $: if (isRange !== null || (startDate && tempEndDate !== null) || !isOpen) {
-    updateCalendars();
-  }
-
-  $: if (isOpen) {
-    if ((!isRange && startDate) || (isRange && startDate && endDate)) {
-      const date = new Date(startDate);
-      startDateYear = date.getFullYear();
-      startDateMonth = date.getMonth();
+  run(() => {
+    if (startDate || endDate) {
+      updateCalendars();
     }
-  }
+  });
 
-  $: if (showTimePicker && !initialize) {
-    startDateTime = getHoursAndMinutes(startDate);
-    endDateTime = getHoursAndMinutes(endDate);
-    initialize = true;
-  }
+  let todayMonth = $derived(today && today.getMonth());
+  let todayDay = $derived(today && today.getDate());
+  let todayYear = $derived(today && today.getFullYear());
+  let prev = $derived(calendarize(new Date(startDateYear, startDateMonth - 1), startOfWeek));
+  let startDateCalendar = $derived(calendarize(new Date(startDateYear, startDateMonth), startOfWeek));
+  let next = $derived(calendarize(new Date(startDateYear, startDateMonth + 1), startOfWeek));
+  let endDateMonth = $derived(startDateMonth === 11 ? 0 : startDateMonth + 1);
+  let endDateYear = $derived(endDateMonth === 0 ? startDateYear + 1 : startDateYear);
+  let endDateCalendar = $derived(calendarize(new Date(endDateYear, endDateMonth), startOfWeek));
+  run(() => {
+    !isRange && (endDate = null);
+  });
+  let disabled = $derived(getDatesFromArray(disabledDates));
+  let enabled = $derived(getDatesFromArray(enabledDates, true));
+
+  run(() => {
+    if (!startDate && !endDate) {
+      startDateYear = Number(defaultYear);
+      startDateMonth = Number(defaultMonth);
+    }
+  });
+
+  run(() => {
+    if (isRange !== null || (startDate && tempEndDate !== null) || !isOpen) {
+      updateCalendars();
+    }
+  });
+
+  run(() => {
+    if (isOpen) {
+      if ((!isRange && startDate) || (isRange && startDate && endDate)) {
+        const date = new Date(startDate);
+        startDateYear = date.getFullYear();
+        startDateMonth = date.getMonth();
+      }
+    }
+  });
+
+  run(() => {
+    if (showTimePicker && !initialize) {
+      startDateTime = getHoursAndMinutes(startDate);
+      endDateTime = getHoursAndMinutes(endDate);
+      initialize = true;
+    }
+  });
 </script>
 
 <div class="datepicker" data-picker-theme={theme} use:clickOutside={{ onClickOutside }}>
-  <slot />
+  {@render children?.()}
   <div
     class="calendars-container"
     class:right={align === 'right'}
@@ -951,7 +916,7 @@
             type="button"
             class:active={normalizeTimestamp(startDate) === normalizeTimestamp(option.start) &&
               normalizeTimestamp(endDate) === normalizeTimestamp(option.end)}
-            on:click|preventDefault={() => onPresetClick({ ...option })}
+            onclick={preventDefault(() => onPresetClick({ ...option }))}
           >
             {option.label}
           </button>
@@ -960,37 +925,37 @@
     {/if}
     <div class="calendar" class:presets-only={isRange && showPresetsOnly}>
       <header class:timepicker={showTimePicker}>
-        <button type="button" on:click|preventDefault={toPrev}>
+        <button type="button" onclick={preventDefault(toPrev)}>
           <div class="icon-previous-month" aria-label="Previous month"></div>
         </button>
         <span>
           <div>{monthLabels[startDateMonth]} {startDateYear}</div>
           {#if showYearControls}
             <div class="years">
-              <button type="button" on:click|preventDefault={toNextYear}>
-                <i class="icon-next-year" aria-label="Next year" />
+              <button type="button" onclick={preventDefault(toNextYear)}>
+                <i class="icon-next-year" aria-label="Next year"></i>
               </button>
-              <button type="button" on:click|preventDefault={toPrevYear}>
-                <i class="icon-previous-year" aria-label="Previous year" />
+              <button type="button" onclick={preventDefault(toPrevYear)}>
+                <i class="icon-previous-year" aria-label="Previous year"></i>
               </button>
             </div>
           {/if}
         </span>
-        <button type="button" on:click|preventDefault={toNext} class:hide={!(!isRange || (isRange && !isMultipane))}>
+        <button type="button" onclick={preventDefault(toNext)} class:hide={!(!isRange || (isRange && !isMultipane))}>
           <div class="icon-next-month" aria-label="Next month"></div>
         </button>
       </header>
 
       {#if showTimePicker}
         <div class="timepicker" class:show={isRange && !isMultipane}>
-          <input type="time" bind:value={startDateTime} on:input={() => (startDate = updateTime('start', startDate))} />
+          <input type="time" bind:value={startDateTime} oninput={() => (startDate = updateTime('start', startDate))} />
 
           {#if isRange}
             <input
               type="time"
               class="end-time"
               bind:value={endDateTime}
-              on:input={() => (endDate = updateTime('end', endDate))}
+              oninput={() => (endDate = updateTime('end', endDate))}
             />
           {/if}
         </div>
@@ -1018,11 +983,11 @@
                   class:first={isFirstDayOfMonth(startDateCalendar[weekIndex][dayIndex])}
                   class:last={isLastDayOfMonth(startDateCalendar[weekIndex][dayIndex], startDateCalendar)}
                   class:disabled={isDisabled(startDateCalendar[weekIndex][dayIndex], startDateMonth, startDateYear)}
-                  on:mouseenter={(e) =>
+                  onmouseenter={(e) =>
                     onMouseEnter(e, startDateCalendar[weekIndex][dayIndex], startDateMonth, startDateYear)}
-                  on:mouseleave={onMouseLeave}
-                  on:click|preventDefault={(e) =>
-                    onClick(e, startDateCalendar[weekIndex][dayIndex], startDateMonth, startDateYear)}
+                  onmouseleave={onMouseLeave}
+                  onclick={preventDefault((e) =>
+                    onClick(e, startDateCalendar[weekIndex][dayIndex], startDateMonth, startDateYear))}
                   class:norange={isRange && tempEndDate === startDate}
                 >
                   <span>{startDateCalendar[weekIndex][dayIndex]}</span>
@@ -1039,7 +1004,7 @@
     {#if isRange && isMultipane}
       <div class="calendar" class:presets-only={showPresetsOnly}>
         <header class:timepicker={showTimePicker}>
-          <button type="button" on:click|preventDefault={toPrev} class:hide={!(!isRange || (isRange && !isMultipane))}>
+          <button type="button" onclick={preventDefault(toPrev)} class:hide={!(!isRange || (isRange && !isMultipane))}>
             <div class="icon-previous-month" aria-label="Previous month"></div>
           </button>
           <span>
@@ -1047,23 +1012,23 @@
 
             {#if showYearControls}
               <div class="years">
-                <button type="button" on:click|preventDefault={toNextYear}>
-                  <i class="icon-next-year" aria-label="Next year" />
+                <button type="button" onclick={preventDefault(toNextYear)}>
+                  <i class="icon-next-year" aria-label="Next year"></i>
                 </button>
-                <button type="button" on:click|preventDefault={toPrevYear}>
-                  <i class="icon-previous-year" aria-label="Previous year" />
+                <button type="button" onclick={preventDefault(toPrevYear)}>
+                  <i class="icon-previous-year" aria-label="Previous year"></i>
                 </button>
               </div>
             {/if}
           </span>
-          <button type="button" on:click|preventDefault={toNext}>
+          <button type="button" onclick={preventDefault(toNext)}>
             <div class="icon-next-month" aria-label="Next month"></div>
           </button>
         </header>
 
         {#if showTimePicker}
           <div class="timepicker">
-            <input type="time" bind:value={endDateTime} on:input={() => (endDate = updateTime('end', endDate))} />
+            <input type="time" bind:value={endDateTime} oninput={() => (endDate = updateTime('end', endDate))} />
           </div>
         {/if}
 
@@ -1089,11 +1054,11 @@
                     class:first={isFirstDayOfMonth(endDateCalendar[weekIndex][dayIndex])}
                     class:last={isLastDayOfMonth(endDateCalendar[weekIndex][dayIndex], endDateCalendar)}
                     class:disabled={isDisabled(endDateCalendar[weekIndex][dayIndex], endDateMonth, endDateYear)}
-                    on:mouseenter={(e) =>
+                    onmouseenter={(e) =>
                       onMouseEnter(e, endDateCalendar[weekIndex][dayIndex], endDateMonth, endDateYear)}
-                    on:mouseleave={onMouseLeave}
-                    on:click|preventDefault={(e) =>
-                      onClick(e, endDateCalendar[weekIndex][dayIndex], endDateMonth, endDateYear)}
+                    onmouseleave={onMouseLeave}
+                    onclick={preventDefault((e) =>
+                      onClick(e, endDateCalendar[weekIndex][dayIndex], endDateMonth, endDateYear))}
                     class:norange={isRange && tempEndDate === startDate}
                   >
                     <span>{endDateCalendar[weekIndex][dayIndex]}</span>
